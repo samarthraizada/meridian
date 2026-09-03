@@ -1,0 +1,12 @@
+meridian_dbt:
+  outputs:
+    dev:
+      type: postgres
+      host: db.vhbjaolzqxmoizgkelco.supabase.co
+      port: 5432
+      user: postgres
+      pass: "Vitasta@1019"
+      dbname: postgres
+      schema: public
+      threads: 1
+  target: dev

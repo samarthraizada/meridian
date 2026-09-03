@@ -11,7 +11,6 @@ meridian_dbt/dbt_packages/
 meridian_dbt/logs/
 
 # credentials
-profiles.yml
 *.key
 
 # OS
