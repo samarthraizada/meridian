@@ -53,11 +53,15 @@ function BriefingSection({ label, content, color }) {
         <div className={`flex-1 h-px bg-gradient-to-r ${c.rule} to-transparent`} />
       </div>
       <div className={`pl-4 border-l-2 ${c.border} ${c.bg} rounded-r-md p-4`}>
-        {content.split("\n\n").filter(Boolean).map((para, i) => (
-          <p key={i} className="font-serif text-[15px] leading-relaxed text-[#C9D1D9] mb-3 last:mb-0">
-            {para}
-          </p>
-        ))}
+        {content
+  .split("\n\n")
+  .filter(p => p.trim() && !p.trim().match(/^[\*\-]{1,3}$/) && p.trim() !== "---")
+  .map((para, i) => (
+    <p key={i} className="font-serif text-[15px] leading-relaxed text-[#C9D1D9] mb-3 last:mb-0">
+      {para.replace(/\*\*/g, "").replace(/^---$/, "").trim()}
+    </p>
+  ))
+}
       </div>
     </div>
   );
@@ -142,9 +146,7 @@ export default function App() {
       {/* Header */}
       <header className="border-b border-[#1C2128] bg-[#0A0C10] px-6 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-md bg-gradient-to-br from-[#00C2A8] to-[#0090B0] flex items-center justify-center text-[#060810] font-bold text-sm">
-            M
-          </div>
+          <img src="/logo.png" alt="Meridian" className="w-7 h-7 rounded-md" />
           <span className="text-sm font-semibold tracking-widest text-[#F0F2F5]">
             MERIDIAN
           </span>
