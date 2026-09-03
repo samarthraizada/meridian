@@ -79,6 +79,7 @@ def run_mf_query(metrics: list, group_by: list) -> str:
     cmd = ["mf", "query", "--metrics", metrics_str, "--group-by", group_by_str]
     env = os.environ.copy()
     env["DBT_PROFILES_DIR"] = PROFILES_DIR
+    env["DBT_PROJECT_DIR"] = DBT_PROJECT_DIR
     env["PYTHONIOENCODING"] = "utf-8"
     env["TERM"] = "dumb"
     result = subprocess.run(
@@ -93,7 +94,6 @@ def run_mf_query(metrics: list, group_by: list) -> str:
     if result.returncode != 0:
         return f"Query error: {result.stderr}"
     return result.stdout
-
 
 def parse_output(text: str) -> dict:
     sections = {"summary": "", "anomaly": "", "watch": "", "raw": text}
