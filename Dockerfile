@@ -14,3 +14,7 @@ ENV DBT_PROJECT_DIR=/app/meridian_dbt
 ENV DBT_PROFILES_DIR=/app/meridian_dbt
 
 EXPOSE 8000
+
+COPY backend/start.sh .
+RUN chmod +x start.sh
+CMD ["./start.sh"]
