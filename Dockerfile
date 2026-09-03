@@ -14,5 +14,3 @@ ENV DBT_PROJECT_DIR=/app/meridian_dbt
 ENV DBT_PROFILES_DIR=/app/meridian_dbt
 
 EXPOSE 8000
-
-CMD uvicorn backend.main:app --host 0.0.0.0 --port $PORT
