@@ -105,17 +105,25 @@ class BriefingRequest(BaseModel):
 
 
 def parse_output(text: str) -> dict:
-    sections = {"summary": "", "anomaly": "", "watch": ""}
     import re
-    summary_match = re.search(r"EXECUTIVE SUMMARY\s*([\s\S]*?)(?=ANOMALY FLAG|$)", text, re.IGNORECASE)
+    sections = {"summary": "", "anomaly": "", "watch": "", "raw": text}
+
+    # Try strict section labels first
+    summary_match = re.search(r"EXECUTIVE SUMMARY\s*([\s\S]*?)(?=ANOMALY FLAG|WATCH ITEM|$)", text, re.IGNORECASE)
     anomaly_match = re.search(r"ANOMALY FLAG\s*([\s\S]*?)(?=WATCH ITEM|$)", text, re.IGNORECASE)
     watch_match = re.search(r"WATCH ITEM\s*([\s\S]*?)$", text, re.IGNORECASE)
+
     if summary_match:
         sections["summary"] = summary_match.group(1).strip()
     if anomaly_match:
         sections["anomaly"] = anomaly_match.group(1).strip()
     if watch_match:
         sections["watch"] = watch_match.group(1).strip()
+
+    # Fallback: if nothing parsed, put everything in summary
+    if not sections["summary"] and not sections["anomaly"] and not sections["watch"]:
+        sections["summary"] = text.strip()
+
     return sections
 
 
