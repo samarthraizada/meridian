@@ -1,11 +1,12 @@
 import subprocess
 import os
+import re
+import json
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from anthropic import Anthropic
-import json
 
 app = FastAPI(title="Meridian API")
 
@@ -17,15 +18,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DBT_PROJECT_DIR = os.environ.get(
-    "DBT_PROJECT_DIR",
-    "/app/meridian_dbt"
-)
-)
-PROFILES_DIR = os.environ.get(
-    "DBT_PROFILES_DIR",
-    os.path.expanduser(r"~\.dbt")
-)
+DBT_PROJECT_DIR = os.environ.get("DBT_PROJECT_DIR", "/app/meridian_dbt")
+PROFILES_DIR = os.environ.get("DBT_PROFILES_DIR", "/app/meridian_dbt")
 
 client = Anthropic()
 
@@ -101,31 +95,24 @@ def run_mf_query(metrics: list, group_by: list) -> str:
     return result.stdout
 
 
-class BriefingRequest(BaseModel):
-    question: str
-
-
 def parse_output(text: str) -> dict:
-    import re
     sections = {"summary": "", "anomaly": "", "watch": "", "raw": text}
-
-    # Try strict section labels first
     summary_match = re.search(r"EXECUTIVE SUMMARY\s*([\s\S]*?)(?=ANOMALY FLAG|WATCH ITEM|$)", text, re.IGNORECASE)
     anomaly_match = re.search(r"ANOMALY FLAG\s*([\s\S]*?)(?=WATCH ITEM|$)", text, re.IGNORECASE)
     watch_match = re.search(r"WATCH ITEM\s*([\s\S]*?)$", text, re.IGNORECASE)
-
     if summary_match:
         sections["summary"] = summary_match.group(1).strip()
     if anomaly_match:
         sections["anomaly"] = anomaly_match.group(1).strip()
     if watch_match:
         sections["watch"] = watch_match.group(1).strip()
-
-    # Fallback: if nothing parsed, put everything in summary
     if not sections["summary"] and not sections["anomaly"] and not sections["watch"]:
         sections["summary"] = text.strip()
-
     return sections
+
+
+class BriefingRequest(BaseModel):
+    question: str
 
 
 @app.get("/health")
@@ -158,7 +145,6 @@ async def generate_briefing(request: BriefingRequest):
                             "metrics": metrics,
                             "group_by": group_by
                         })
-                        # Stream the query event to frontend
                         yield f"data: {json.dumps({'type': 'query', 'metrics': metrics, 'group_by': group_by})}\n\n"
                         result = run_mf_query(metrics, group_by)
                         tool_results.append({
@@ -178,6 +164,7 @@ async def generate_briefing(request: BriefingRequest):
                 sections = parse_output(final_text)
                 yield f"data: {json.dumps({'type': 'briefing', 'sections': sections, 'queries': queries_fired})}\n\n"
                 break
+
             else:
                 yield f"data: {json.dumps({'type': 'error', 'message': f'Unexpected stop: {response.stop_reason}'})}\n\n"
                 break
