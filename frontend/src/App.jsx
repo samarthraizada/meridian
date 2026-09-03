@@ -55,10 +55,10 @@ function BriefingSection({ label, content, color }) {
       <div className={`pl-4 border-l-2 ${c.border} ${c.bg} rounded-r-md p-4`}>
         {content
   .split("\n\n")
-  .filter(p => p.trim() && !p.trim().match(/^[\*\-]{1,3}$/) && p.trim() !== "---")
+  .filter(p => p.trim() && !p.trim().match(/^[\*\-#]{1,3}$/) && p.trim() !== "---")
   .map((para, i) => (
     <p key={i} className="font-serif text-[15px] leading-relaxed text-[#C9D1D9] mb-3 last:mb-0">
-      {para.replace(/\*\*/g, "").replace(/^---$/, "").trim()}
+      {para.replace(/\*\*/g, "").replace(/^---$/, "").replace(/^#{1,3}$/, "").trim()}
     </p>
   ))
 }
