@@ -1,0 +1,11 @@
+﻿sku_id,product_name,category,stock_units,reorder_point,unit_cost,week_of
+SKU001,Linen Duvet Cover,bedding,142,50,28.00,2026-06-16
+SKU002,Bamboo Pillow Set,bedding,0,30,18.50,2026-06-16
+SKU003,Ceramic Serving Bowl,kitchen,87,40,12.00,2026-06-16
+SKU004,Cast Iron Skillet,kitchen,210,60,34.00,2026-06-16
+SKU005,Jute Area Rug 5x8,rugs,23,35,67.00,2026-06-16
+SKU006,Cotton Throw Blanket,bedding,156,45,22.00,2026-06-16
+SKU007,Walnut Cutting Board,kitchen,0,25,41.00,2026-06-16
+SKU008,Marble Coaster Set,kitchen,94,30,15.50,2026-06-16
+SKU009,Linen Curtain Panel,textiles,61,40,38.00,2026-06-16
+SKU010,Wool Accent Rug 3x5,rugs,18,30,45.00,2026-06-16

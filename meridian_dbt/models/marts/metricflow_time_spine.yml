@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: metricflow_time_spine
+    description: MetricFlow time spine table — one row per day for metric alignment.
+    columns:
+      - name: date_day
+        description: One row per calendar day.
+        granularity: day
+    time_spine:
+      standard_granularity_column: date_day

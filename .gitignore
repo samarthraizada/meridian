@@ -1,0 +1,19 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# dbt
+meridian_dbt/target/
+meridian_dbt/dbt_packages/
+meridian_dbt/logs/
+
+# credentials
+profiles.yml
+*.key
+
+# OS
+.DS_Store
+Thumbs.db

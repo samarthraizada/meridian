@@ -1,0 +1,99 @@
+version: 2
+
+semantic_models:
+  - name: orders
+    description: >
+      Order-level fact table for Meridian Retail Co. Each row is one completed
+      order. This is the certified source of truth for revenue, volume, and
+      acquisition metrics.
+    model: ref('fct_orders')
+
+    defaults:
+      agg_time_dimension: order_date
+
+    entities:
+      - name: order
+        type: primary
+        expr: order_id
+      - name: customer
+        type: foreign
+        expr: customer_id
+
+    dimensions:
+      - name: order_date
+        type: time
+        type_params:
+          time_granularity: day
+      - name: channel
+        type: categorical
+      - name: acquisition_channel
+        type: categorical
+      - name: region
+        type: categorical
+      - name: is_new_customer
+        type: categorical
+
+    measures:
+      - name: order_count
+        description: Total number of completed orders
+        agg: count
+        expr: order_id
+      - name: gross_revenue
+        description: Sum of order revenue before discounts
+        agg: sum
+        expr: revenue
+      - name: discount_amount
+        description: Sum of discounts applied across orders
+        agg: sum
+        expr: discount_amount
+      - name: promo_orders
+        description: Count of orders where a promo code was used
+        agg: sum
+        expr: promo_code_used
+      - name: acquisition_cost
+        description: Sum of customer acquisition costs for orders in period
+        agg: sum
+        expr: acquisition_cost
+
+metrics:
+  - name: gross_revenue
+    description: >
+      Total revenue across all completed orders. Certified definition
+      for all executive revenue reporting.
+    type: simple
+    type_params:
+      measure: gross_revenue
+
+  - name: order_volume
+    description: Total count of completed orders in the period.
+    type: simple
+    type_params:
+      measure: order_count
+
+  - name: promo_order_count
+    description: Count of orders where a promo code was applied.
+    type: simple
+    type_params:
+      measure: promo_orders
+
+  - name: promo_attach_rate
+    description: >
+      Share of orders where a promotional code was applied. Signals
+      discount dependency and campaign effectiveness.
+    type: ratio
+    type_params:
+      numerator: promo_order_count
+      denominator: order_volume
+
+  - name: total_discount_amount
+    description: Total dollar value of discounts applied in the period.
+    type: simple
+    type_params:
+      measure: discount_amount
+
+  - name: total_acquisition_cost
+    description: >
+      Total customer acquisition spend associated with orders in the period.
+    type: simple
+    type_params:
+      measure: acquisition_cost
