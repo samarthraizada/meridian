@@ -19,7 +19,8 @@ app.add_middleware(
 
 DBT_PROJECT_DIR = os.environ.get(
     "DBT_PROJECT_DIR",
-    r"C:\Users\samar\Documents\Projects\meridian\meridian_dbt"
+    "/app/meridian_dbt"
+)
 )
 PROFILES_DIR = os.environ.get(
     "DBT_PROFILES_DIR",
